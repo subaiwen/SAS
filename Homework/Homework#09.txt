@@ -1,0 +1,67 @@
+/* Exercise#1 */
+libname Learn 'J:\CLASSES\STAT46';
+data Sales;
+	set Learn.Sales;
+	TotalSales = Quantity * UnitCost;
+proc sort data=Sales;
+	by Region;
+proc print data=Sales;
+	by Region;
+	ID Region;
+	sum Quantity TotalSales;
+	var Region Quantity TotalSales;
+	title 'Sales Figures from the Sales Data Set';
+run;
+
+/* Exercise#2 */
+libname Learn 'J:\CLASSES\STAT46';
+data Blood;
+	set Learn.Blood;
+proc report data=Blood nowindows;
+	column Gender WBC RBC;
+	define Gender/group;
+	define WBC/analysis mean 'Average WBC';
+	define RBC/analysis mean 'Average RBC';
+	rbreak after /summarize;
+	format WBC comma5. RBC 4.2;
+run;
+
+
+/* Exercise#3 */
+/* 1. */
+libname Learn 'J:\CLASSES\STAT46';
+data BloodPressure1;
+	set Learn.BloodPressure;
+	where Age >= 45;
+proc sort data=BloodPressure out=BloodPressure11;
+	by Age decending Age;
+proc print data=BloodPressure1;
+	title 'Subject of age 45 or older, in a descending order';
+	footnote 'SBP is for Systolic Blood Pressure';
+	footnote2 'DBP is for Diastolic Blood Pressure';
+run;
+
+/* 2. */
+libname Learn 'J:\CLASSES\STAT46';
+data BloodPressure2;
+	set Learn.BloodPressure;
+proc report data=BloodPressure2 nowindows;
+	title 'Subjects in Gender and Age Order';
+	column Gender Age SBP DBP;
+	define Gender/group;
+	define Age / Order;
+	define SBP / 'Systolic Blood Pressure';
+	define DBP / 'Diastolic Blood Pressure';
+run;
+
+/* Exercise#4 */
+libname Learn 'J:\CLASSES\STAT46';
+data _null_;
+	length type $ 1.;
+	set Learn.Insurance;
+	File 'C:\Users\zl1409a\Desktop\Insurance.txt' print;
+	title;
+
+	put @5 'Insurance Report' // 'Insurance Policy contract for ' Name 'is of type ' Type;
+	put _page_;
+run;

@@ -1,0 +1,120 @@
+/* Exercise #1 */
+
+title "Import the spreadsheet";
+proc import datafile = 'J:\CLASSES\STAT46\BonusGift.xls' DBMS=xlsx out=df REPLACE;
+run;
+proc print data=df;
+run;
+data df;
+set df;
+if Quantity = 1 then Cat = 'Gift 1';
+if Quantity = 2 then Cat = 'Gift 2';
+run;
+proc print data=df;
+run; 
+
+/* Exercise #2 */
+
+libname stat 'J:\CLASSES\STAT46';
+/* 1. */
+data df;
+	set stat.earthquakes;
+	select;
+	when (Magnitude >= 8.5) MagnStrength = 'Strong';
+	when (Magnitude < 8.5 & Magnitude >= 6) MagnStrength = 'Medium';
+	when (Magnitude < 6) MagnStrength = 'Weak';
+	otherwise;
+	end;
+run;
+proc print data=df;
+run;
+/* or */
+libname stat 'J:\CLASSES\STAT46';
+data df;
+	set stat.earthquakes;
+	if Magnitude >= 8.5 then MagnStrength = 'Strong';
+	else if Magnitude < 8.5 & Magnitude >= 6 then MagnStrength = 'Medium';
+	else if Magnitude < 6 then MagnStrength = 'Weak';
+run;
+proc print data=df;
+run;
+
+/* 2. */
+libname stat 'J:\CLASSES\STAT46';
+data df;
+	set stat.earthquakes;
+	Date=input(catx("/",Month,Day,Year),mmddyy10.);
+    format date mmddyy10.;
+run;
+proc print data=df;
+	format date mmddyy10.;
+run;
+proc print data=df;
+	format date ddmmyy8.;
+run;
+
+/* 3. */
+libname stat 'J:\CLASSES\STAT46';
+data df;
+	set stat.earthquakes;
+	if Magnitude >= 8.5 then MagnStrength = 'Strong';
+	else if Magnitude < 8.5 & Magnitude >= 6 then MagnStrength = 'Medium';
+	else if Magnitude < 6 then MagnStrength = 'Weak';
+	Date=input(catx("/",Month,Day,Year),mmddyy10.);
+    format date mmddyy10.;
+run;
+proc print data=df;
+	format date mmddyy10.;
+	var Date MagnStrength State;
+run;
+
+/* 4. */
+libname stat 'J:\CLASSES\STAT46';
+data df;
+	set stat.earthquakes;
+	if state = 'Alaska';
+run;
+proc print data=df noobs;
+run;
+
+/* 5. */
+libname stat 'J:\CLASSES\STAT46';
+data df;
+	set stat.earthquakes;
+	Date=input(catx("/",Month,Day,Year),mmddyy10.);
+    format date mmddyy10.;
+run;
+proc print data=df;
+	format date mmddyy10.;
+	var Date magnitude State;
+run;
+
+/* 6. */
+libname stat 'J:\CLASSES\STAT46';
+data df;
+	set stat.earthquakes;
+	if Month in (1,2,3) then By_Season = 'Winter';
+	if Month in (4,5,6) then By_Season = 'Spring';
+	if Month in (7,8,9) then By_Season = 'Summer';
+	if Month in (10,11,12) then By_Season = 'Fall';
+run;
+proc print data=df;
+	var Month State By_Season;
+run;
+
+/* Exercise#3 */
+/* 1. */
+libname stat 'J:\CLASSES\STAT46\samples\chapter7_data';
+data df;
+	set stat.airtraffic;
+run;
+proc means data=df NMISS;
+	var ATLFlights BOSFlights DENFlights DFWFlights EWRFlights HNLFlights LAXFlights MIAFlights ORDFlights
+	SANFlights SEAFlights SFOFlights;
+run;
+
+/* 2. */
+proc means data=df NMISS;
+	var ATLPassengers BOSPassengers DENPassengers DFWPassengers EWRPassengers HNLPassengers
+	LAXPassengers MIAPassengers ORDPassengers SANPassengers SEAPassengers SFOPassengers;
+run;

@@ -1,0 +1,128 @@
+/* Exercise#1 */
+/* Q1 */
+libname stat "J:\Classes\STAT46";
+data college;
+	set stat.college;
+	format _all_;
+run;
+proc sort data=college out=college;
+	by SchoolSize;
+title "Median by school size";
+proc means data=college median;
+	by SchoolSize;
+	var GPA ClassRank;
+run;
+
+/* Q2 */
+proc means data=college median;
+	class SchoolSize;
+	var GPA ClassRank;
+run;
+
+/* Q3 */
+/* subsititute value */
+data college;
+	set college;	Size = SchoolSize;
+	if missing(Size) then SchoolSize = 'Missing';
+	if Size = 'L' then SchoolSize = 'Large';
+	if Size = 'M' then SchoolSize = 'Medium';
+	if Size = 'S' then SchoolSize = 'Small';
+	drop Size;
+run;
+proc means data=college missing noprint;
+	by Size;
+	var ClassRank GPA;
+	output out = shxt
+		   mean = M_ClassRank M_GPA
+		   n = N_ClassRank N_GPA
+		   median = Med_ClassRank Med_GPA;
+run;
+proc print data=shxt;
+run;
+/* make missing value on top */
+proc sort data=college out=college;
+	by SchoolSize;
+proc format;
+	value $lol
+	'L' = 'Large'
+	'M' = 'Medium'
+	'S' = 'Small'
+	' ' = 'Missing'
+	;
+run;
+proc means data=college missing noprint;
+	by SchoolSize;
+	var ClassRank GPA;
+	output out = shxt
+		   mean = M_ClassRank M_GPA
+		   n = N_ClassRank N_GPA
+		   median = Med_ClassRank Med_GPA;
+run;
+proc print data=shxt;
+	format SchoolSize $lol.;
+run;
+
+/* Q4 */
+libname stat "J:\Classes\STAT46";
+data college;
+	set stat.college;
+	format _all_;
+run;
+proc format;
+	value $lol
+	'L' = 'Large'
+	'M' = 'Medium'
+	'S' = 'Small'
+	;
+run;
+proc tabulate data = college format = 6.2;
+	class Gender SchoolSize;
+	var ClassRank GPA;
+	table (Gender All),
+		   mean*(ClassRank*(SchoolSize All) GPA*(SchoolSize ALL));
+    format SchoolSize $lol.;
+run;
+
+/* Exercise#2 */
+/* Q1 */
+libname stat "J:\Classes\STAT46";
+data bloodpressure;
+	set stat.bloodpressure;
+proc format;
+	value agetype
+	low-40 = "40 and younger"
+	40<-60 = "41 to 60"
+	60<-high = "61 to older";
+proc freq data=bloodpressure;
+	tables age;
+	format age agetype.
+run;
+
+/* Q2 */
+proc tabulate data=bloodpressure;
+	class gender;
+	var SBP DBP;
+	table Gender, SBP*n DBP*n;
+run;
+
+/* Exercise#3 */
+libname stat "J:\Classes\STAT46";
+data College;
+	set stat.College;
+	format _all_;
+proc format;
+	value $gendertype
+	'M' = 'Male'
+	'F' = 'Female';
+	value $scholarshiptype
+	'N' = 'No'
+	'Y' = 'Yes';
+	value classranktype
+	low - 70 = 'Low to 70'
+	70 <- high = '71 to Higher';
+proc tabulate data=college;
+	class Scholarship ClassRank Gender;
+	table (Scholarship All),
+		   N*(ClassRank*(Gender All))/MISSTEXT = 'None' box='Demographics';
+    format gender $gendertype. scholarship $scholarshiptype. classrank classranktype.;
+run;

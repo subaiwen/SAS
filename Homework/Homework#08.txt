@@ -1,0 +1,78 @@
+/* Exercise#1 */
+libname stat 'J:\CLASSES\STAT46';
+data MountainUSA RoadFrance;
+	set stat.Bicycles;
+	if Country = 'USA'& Model = 'Mountain Bike' then output MountainUSA;
+	if  Country = 'France'& Model= 'Road Bike' then output RoadFrance;
+run;
+proc print data=MountainUSA;
+run;
+proc print data=RoadFrance;
+run;
+
+/* Exercise#2 */
+data NewProducts;
+	set stat.NewProducts;
+run;
+proc sort data=NewProducts;
+	by Price;
+run;
+proc sort data=Inventory;
+	by Price;
+run;
+data Updated;
+	update Inventory NewProducts;
+	by Price;
+run;
+proc print data=Updated;
+run;
+
+
+/* Exercise#3 */
+Data Markup;
+	Input Manuf : $10. Markup;
+	Datalines;
+	Cannondale 1.05
+	Trek 1.07
+	;
+run;
+libname stat 'J:\CLASSES\STAT46';
+data bicycles;
+	set stat.Bicycles;
+run;
+proc sort data=bicycles;
+	by Manuf;
+run;
+proc sort data=Markup;
+	by Manuf;
+run;
+data MarkupPrices;
+	merge bicycles Markup;
+	by Manuf;
+	NewTotal=TotalSales*Markup;
+run;
+proc print data=MarkupPrices;
+run;
+
+
+/* Exercise#4 */
+libname stat 'J:\CLASSES\STAT46';
+data Purchase;
+	set stat.Purchase;
+run;
+data Inventory;
+	set stat.Inventory;
+run;
+proc sort data=Purchase;
+	by Model;
+run;
+proc sort data=Inventory;
+	by Model;
+run;
+data df;
+	merge Inventory(in=In_Inventory) Purchase;
+	by Model;
+	if not Quantity;
+run;
+proc print data=df;
+run;

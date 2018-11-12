@@ -1,0 +1,107 @@
+/* Exercise#1 */
+/* 1. */
+data ThreeDates;
+    input Date1:mmddyy10. Date2:mmddyy10. Date3:date9.;
+    datalines;
+    01/03/1950 01/03/1960 03Jan1970
+    05/15/2000  05/15/2002  15May2003
+    10/10/1998 11/12/2000  25Dec2005
+    ;
+    run;
+proc print data=ThreeDates;
+run;
+
+/* 2. */
+proc print data=ThreeDates;
+    format Date1 mmddyy10. Date2 mmddyy10. Date3 mmddyy10.;
+run;
+    
+/* 3. */
+data ThreeDates;
+    set ThreeDates;
+    Year23 = yrdif(Date2, Date3);
+run;
+proc print data=ThreeDates;
+    format Date1 mmddyy10. Date2 mmddyy10. Date3 mmddyy10.;
+run;
+
+/* 4. */
+data ThreeDates;
+    set ThreeDates;
+    Year23 = round(yrdif(Year23));
+run;
+proc print data=ThreeDates;
+    format Date1 mmddyy10. Date2 mmddyy10. Date3 mmddyy10.;
+run;
+
+/* Exercise#2 */
+data dt;
+    input Day Month Year;
+    Date=mdy(Month,Day,Year);
+    datalines;
+    25 12 2005
+    1 1 1960
+    21 10 1946
+    16 10 2018
+    ;
+    run;
+proc print data=dt;
+    format Date mmddyy10.;
+run;
+
+
+/* Exercise#3 */
+/* 1. */
+libname stat 'J:\CLASSES\STAT46';
+data df;
+    set stat.hosp;
+    Day = weekday(AdmitDate);
+    Month = month(AdmitDate);
+    Year = year(AdmitDate);
+run;
+Proc freq data=df(obs=10);
+run;
+
+/* 2. */
+libname stat 'J:\CLASSES\STAT46';
+data df;
+    set stat.hosp;
+    MonthsDec = intck('month',AdmitDate,'31Dec2007'd);
+run;
+Proc print data=stat.hosp;
+run;
+
+/* 3. */
+libname stat 'J:\CLASSES\STAT46';
+data df;
+    set stat.hosp;
+    Months = intck('month',AdmitDate,today());
+run;
+Proc print data=stat.hosp(obs=20);
+run;
+
+/* Exercise#4 */
+Data MonthSales;
+	Input month  sales @@;
+	retain SumSales 0;
+	SumSales = sum(SumSales, SumSales + sales);
+	Datalines;
+	1 4000 2 5000 3 . 4 5500 5 500 6 6000 7 6500 8 4500
+	9 5100 10 5700 11 6500 12 7500
+;
+run;
+proc print data=MonthSales;
+run;
+
+/* Exercise#5 */
+data df;
+	integer=1;
+	do until (squares gt 100);
+		integer + 1;
+		squares = integer**2;
+		output;
+		output;
+	end;
+run;
+proc print data=df;
+run;
