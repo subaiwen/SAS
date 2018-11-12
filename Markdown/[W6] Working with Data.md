@@ -233,9 +233,9 @@ DATA homeimprovements;
 	*use a select statement
 	Select;
 	When (Cost = .) CostGroup = 'missing';
-    When (Cost < 2000) CostGroup = 'low';
-    When (Cost < 10000) CostGroup = 'medium';
-    Otherwise CostGroup = 'high';
+    	When (Cost < 2000) CostGroup = 'low';
+    	When (Cost < 10000) CostGroup = 'medium';
+    	Otherwise CostGroup = 'high';
 END;
 RUN;
 PROC PRINT DATA = homeimprovements;
