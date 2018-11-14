@@ -100,7 +100,6 @@ data df;
 		integer + 1;
 		squares = integer**2;
 		output;
-		output;
 	end;
 run;
 proc print data=df;
