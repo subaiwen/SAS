@@ -1,0 +1,126 @@
+/* Final Project */
+/* Part 1*/
+/* 1. */
+libname stat 'J:\Classes\Stat46';
+DATA freq;
+	set stat.Medical;
+	weekday = WEEKDAY(VisitDate);
+/* a. */
+PROC FREQ data=freq;
+	tables weekday;
+/* b. */
+PROC FREQ data=freq ;
+	tables VisitDate;
+run;
+
+/* 2. */
+libname FmtVisit 'C:\Users\zl1409a\Desktop';
+PROC FORMAT LIBRARY = FmtVisit;
+	VALUE wd 1-5 = 'weekday'
+		 6-7 = 'weekend';
+	VALUE my 3-5 = 'Spring'
+		 6-8 = 'Summer'
+		 9-11 = 'Autumn'
+		 1-2 = 'Winter'
+		 12 = 'Winter';
+OPTION FMTSEARCH = (FmtVisit);
+DATA freq2;
+	set freq;
+	month = MONTH(VisitDate);
+	format weekday wd. month my.;
+PROC PRINT data=freq2;
+RUN;
+
+/* 3. */
+DATA Interval;
+	set stat.Medical;
+	Quarter = intck ('qtr', '01Jan2006'd, VisitDate);
+RUN;
+
+/* 4. */
+DATA return;
+	set stat.Medical;
+	ReturnVisit = intnx ('week', VisitDate, 6);
+RUN;
+PROC PRINT data=return;
+	VAR Patno VisitDate ReturnVisit;
+	FORMAT ReturnVisit mmddyy10.;
+RUN;
+
+/* 5. */
+DATA return2;
+	set stat.Medical;
+	ReturnVisit = intnx ('month', VisitDate, 6);
+RUN;
+PROC PRINT data=return2;
+	VAR Patno VisitDate ReturnVisit;
+	FORMAT ReturnVisit mmddyy10.;
+RUN;
+
+/* Part 2 */
+/* 1. */
+PROC IMPORT datafile="J:\CLASSES\STAT46\College.csv" out=df dbms=csv; 
+RUN;
+DATA df;
+	SET df;
+	IF _n_ = 101 THEN DELETE;
+	New = INPUT(ClassRank, 3.);
+	DROP ClassRank;
+	RENAME New=ClassRank;
+RUN;
+
+/* 2. */
+PROC MEANS data = df MEAN MEDIAN MAX MIN NMISS N;
+	VAR GPA ClassRank;
+RUN;
+
+/* 3. */
+/* (1) */
+PROC SORT DATA = df;
+       BY SchoolSize;
+PROC MEANS data = df MEAN MEDIAN;
+	VAR GPA ClassRank;
+	BY SchoolSize;
+RUN;
+/* (2) */
+PROC MEANS data = df MEAN MEDIAN;
+	VAR GPA ClassRank;
+	CLASS SchoolSize;
+RUN;
+
+/* 4. */
+PROC FORMAT;
+	VALUE classfm 0-50 = 'Bottom Half'
+		    51-74 = '3rd quartile'
+		    75-100 = 'Top Quarter';
+RUN;
+PROC MEANS data = df MEAN;
+	VAR GPA;
+	CLASS ClassRank;
+	FORMAT ClassRank classfm.;
+RUN;
+
+/* 5. */
+/* a. */
+PROC MEANS data = df N NMISS MEAN MEDIAN MIN MAX;
+	VAR GPA ClassRank;
+	OUTPUT OUT = Grand;
+RUN;
+/* b. */
+PROC MEANS data = df N NMISS MEAN MEDIAN MIN MAX;
+	VAR GPA ClassRank;
+	CLASS Gender;
+	OUTPUT OUT = ByGender;
+RUN;
+/* c. */
+PROC MEANS data = df N NMISS MEAN MEDIAN MIN MAX;
+	VAR GPA ClassRank;
+	CLASS SchoolSize;
+	OUTPUT OUT = BySize;
+RUN;
+/* d. */
+PROC MEANS data = df N NMISS MEAN MEDIAN MIN MAX;
+	VAR GPA ClassRank;
+	CLASS Gender SchoolSize;
+	OUTPUT OUT = Cell;
+RUN;

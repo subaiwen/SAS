@@ -1,0 +1,76 @@
+/* Part 1 */
+/* 1. */
+PROC IMPORT DATAFILE = 'J:\CLASSES\STAT46\PAMSAS.xlsx' DBMS=XLSX OUT = PAM; 
+RUN;
+PROC PRINT DATA = PAM; 
+RUN;
+
+/* 2. */
+LIBNAME Lab XLSX PATH='J:\CLASSES\STAT46\PAMSAS.xlsx';
+
+/* 3. */
+DATA PAM;
+   SET Lab.'PAM$';
+RUN;
+
+/* 4. */
+PROC CONTENTS data = PAM;
+RUN;
+
+/* 5. */
+PROC SORT data = PAM OUT = sort_country NODUPKEY;
+	BY country;
+PROC PRINT data = sort_country;
+	VAR country;
+RUN;
+
+/* Part 2 */
+/* 1. */
+DATA CeaseFire;
+	SET PAM;
+	WHERE cease_date IS NOT MISSING & total_implem_points > 50 & year_count <= 3;
+RUN;
+
+/* 2. */
+PROC SORT DATA = CeaseFire;
+	BY year_count DESCENDING total_implem_points;
+PROC PRINT DATA = CeaseFire;
+RUN;
+
+/* Part 3 */
+/* 1. */
+PROC MEANS data = PAM NMISS;
+	VAR cease_date;
+RUN;
+
+/* 2. */
+PROC MEANS data = PAM MIN MAX;
+	VAR total_prov;
+DATA min_max;
+	SET PAM;
+	WHERE total_prov = 8 | total_prov = 43;
+PROC SORT data = min_max NODUPKEY;
+	BY country;
+PROC PRINT data = min_max;
+	VAR country total_prov;
+RUN;
+
+/* 3. */
+PROC MEANS data = PAM MEDIAN;
+	VAR year_count;
+RUN;
+
+/* 4. */
+PROC MEANS data = PAM MEAN;
+	VAR total_implem_points;
+RUN;
+
+/* Part 4 */
+DATA nocease;
+	SET PAM;
+	WHERE MISSING(cease_date);
+RUN;
+PROC TABULATE data = nocease missing;
+	CLASS country year_count;
+	TABLE country, N*year_count;
+RUN;
